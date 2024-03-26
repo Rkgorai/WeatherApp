@@ -17,14 +17,14 @@ class WeatherViewModel @Inject constructor(private val repository: WeatherReposi
         DataOrException(null, true, Exception(""))
     )
 
-    init {
-        getWeatherData("today")
-    }
+//    init {
+//        getWeatherData(endDate="today")
+//    }
 
-    private fun getWeatherData(startDate: String, endDate: String = "today") {
+    public fun getWeatherData(endDate: String) {
         viewModelScope.launch {
             data.value.loading = true
-            data.value = repository.getWeatherData(startDate, endDate)
+            data.value = repository.getWeatherData(endDate)
             if (data.value.data.toString().isNotEmpty()) {
                 data.value.loading = false
             }
