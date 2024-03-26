@@ -23,6 +23,10 @@ class WeatherViewModel @Inject constructor(private val repository: WeatherReposi
 
     public fun getWeatherData(endDate: String) {
         viewModelScope.launch {
+            // Clear the previous data
+            data.value = DataOrException(null, true, Exception(""))
+
+            //Fetch New Data
             data.value.loading = true
             data.value = repository.getWeatherData(endDate)
             if (data.value.data.toString().isNotEmpty()) {
