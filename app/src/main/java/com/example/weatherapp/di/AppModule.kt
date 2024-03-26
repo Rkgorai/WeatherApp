@@ -1,6 +1,7 @@
 package com.example.weatherapp.di
 
 import com.example.weatherapp.network.WeatherAPI
+import com.example.weatherapp.repository.WeatherRepository
 import com.example.weatherapp.util.Constants
 import dagger.Module
 import dagger.Provides
@@ -13,6 +14,11 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideWeatherRepository(api: WeatherAPI): WeatherRepository = WeatherRepository(api)
+
     @Singleton
     @Provides
     fun provideWeatherAPI(): WeatherAPI {
