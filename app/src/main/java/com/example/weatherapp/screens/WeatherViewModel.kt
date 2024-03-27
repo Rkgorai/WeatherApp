@@ -52,6 +52,7 @@ class WeatherViewModel @Inject constructor(private val repository: WeatherReposi
         }
     }
 
+
     private val _weatherList = MutableStateFlow<List<WeatherData>>(emptyList())
     val weatherList = _weatherList.asStateFlow()
 

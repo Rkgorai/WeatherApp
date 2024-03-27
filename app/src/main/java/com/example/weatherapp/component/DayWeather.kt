@@ -40,7 +40,7 @@ fun DisplayTemperatures(viewModel: WeatherViewModel) {
     val latitude = viewModel.data.value.data?.latitude
     val longitude = viewModel.data.value.data?.longitude
 
-    val flag = remember {
+    val isFirstTime = remember {
         mutableStateOf(false)
     }
 
@@ -51,21 +51,31 @@ fun DisplayTemperatures(viewModel: WeatherViewModel) {
             .padding(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (!flag.value) {
-            flag.value = true
+        if (!isFirstTime.value) {
+            isFirstTime.value = true
             return
         }else if (viewModel.data.value.loading == true) {
             CircularProgressIndicator()
             return
         }
         else {
-            DisplayResults(temp, tempMin, tempMax, datetime, address, timezone, latitude, longitude)
+            val weatherDataOb = WeatherData(datetime = datetime!!, temp = temp!!, tempmin = tempMin!!, tempmax = tempMax!!, address = address!!, timezone = timezone!!, latitude = latitude!!, longitude = longitude!!)
+            DisplayResults(weatherDataOb)
         }
     }
 }
 
 @Composable
-fun DisplayResults(temp: Double?, tempMin: Double?, tempMax: Double?, datetime: String?, address: String?, timezone: String?, latitude: Double?, longitude: Double?) {
+fun DisplayResults(weatherData: WeatherData) {
+    val temp = weatherData.temp
+    val tempMin = weatherData.tempmin
+    val tempMax = weatherData.tempmax
+    val datetime = weatherData.datetime
+    val address = weatherData.address
+    val timezone = weatherData.timezone
+    val latitude = weatherData.latitude
+    val longitude = weatherData.longitude
+
     Card (
         modifier = Modifier
             .padding(5.dp)
@@ -83,7 +93,7 @@ fun DisplayResults(temp: Double?, tempMin: Double?, tempMax: Double?, datetime: 
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text(text = "$datetime", style = MaterialTheme.typography.titleLarge)
+            Text(text = datetime, style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.size(25.dp))
             Surface(modifier = Modifier
                 .padding(4.dp)

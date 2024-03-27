@@ -25,7 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.weatherapp.component.DisplayResults
 import com.example.weatherapp.component.DisplayTemperatures
+import com.example.weatherapp.model.WeatherData
 
 @Composable
 fun WeatherHome(viewModel: WeatherViewModel = hiltViewModel()) {
@@ -62,7 +64,7 @@ fun WeatherDisplay(viewModel: WeatherViewModel) {
                 ,
             ) {
                 MainContent(viewModel)
-                DisplayTemperatures(viewModel)
+//                DisplayTemperatures(viewModel)
             }
         }
 
@@ -77,6 +79,9 @@ fun MainContent(viewModel: WeatherViewModel) {
     val date = remember {
         mutableStateOf("")
     }
+    val dateCopy = remember {
+        mutableStateOf("")
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -89,19 +94,42 @@ fun MainContent(viewModel: WeatherViewModel) {
                 .fillMaxWidth()
                 .padding(14.dp),
             value = date.value,
-            onValueChange = {date.value = it},
+            onValueChange = {
+                date.value = it
+                dateCopy.value = it
+                            },
             label = { Text("Enter Date in YYYY-MM-DD") },
             enabled = true,
             readOnly = false
         )
 
+        val isFromDB = remember {
+            mutableStateOf(false)
+        }
+
         Button(onClick = {
+            val weatherDataForDate = weatherDataList.find { it.datetime == date.value }
+            if (weatherDataForDate != null) {
+                isFromDB.value = true
+                Log.d("BUTTON", "WeatherDataForDate: $weatherDataForDate")
+
+            } else{
                 viewModel.getWeatherData(date.value)
-            date.value = ""
+                date.value = ""
+            }
         }) {
             Text(text = "Search")
         }
-        Log.d("TAG", "WeatherList: ${viewModel.weatherList.collectAsState().value}")
 
+        Log.d("TAG", "WeatherList: ${viewModel.weatherList.collectAsState().value}")
+        if (isFromDB.value) {
+            weatherDataList.find { it.datetime == dateCopy.value }
+                ?.let { DisplayResults(weatherData = it) }
+            Log.d("FROM DB", "MainContent: FROM DB ${dateCopy.value}")
+
+        }
+        else {
+            DisplayTemperatures(viewModel)
+        }
     }
 }
