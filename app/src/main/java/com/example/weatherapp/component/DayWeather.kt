@@ -124,7 +124,6 @@ fun DisplayResults(temp: Double?, tempMin: Double?, tempMax: Double?, datetime: 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-//@Preview
 @Composable
 fun WeatherDisplay(viewModel: WeatherViewModel) {
     Surface(

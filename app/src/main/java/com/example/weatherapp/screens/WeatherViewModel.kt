@@ -1,13 +1,19 @@
 package com.example.weatherapp.screens
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.data.DataOrException
+import com.example.weatherapp.model.WeatherData
 import com.example.weatherapp.model.WeatherResponse
 import com.example.weatherapp.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,9 +23,19 @@ class WeatherViewModel @Inject constructor(private val repository: WeatherReposi
         DataOrException(null, true, Exception(""))
     )
 
-//    init {
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getAllWeatherData().distinctUntilChanged().collect {listOfWeatherData ->
+                if (listOfWeatherData.isNullOrEmpty()) {
+                    Log.d("Empty", ": Empty List")
+                }
+                else {
+                    _weatherList.value = listOfWeatherData
+                }
+            }
+        }
 //        getWeatherData(endDate="today")
-//    }
+    }
 
     fun getWeatherData(endDate: String) {
         viewModelScope.launch {
@@ -34,4 +50,16 @@ class WeatherViewModel @Inject constructor(private val repository: WeatherReposi
             }
         }
     }
+
+    private val _weatherList = MutableStateFlow<List<WeatherData>>(emptyList())
+    val weatherList = _weatherList.asStateFlow()
+
+    suspend fun addWeatherData(weatherData: WeatherData) = viewModelScope.launch {
+        repository.addWeatherData(weatherData)
+    }
+
+    suspend fun removeWeatherData(weatherData: WeatherData) = viewModelScope.launch {
+        repository.deleteWeatherData(weatherData)
+    }
+
 }
