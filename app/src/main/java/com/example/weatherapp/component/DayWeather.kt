@@ -39,23 +39,7 @@ import com.example.weatherapp.screens.WeatherViewModel
 
 @Composable
 fun DayWeather(viewModel: WeatherViewModel) {
-
-
-
-//    Log.d("ADDRESS, TIMEZONE", "WeatherHome: $address $timezone")
-//    Log.d("LATITUDE, LONGITUDE", "WeatherHome: $latitude $longitude")
-
-//    Log.d("TEMP", "DayWeather: $temp")
-//    Log.d("TEMP MIN", "DayWeather: $tempMin")
-//    Log.d("TEMP MAX", "DayWeather: $tempMax")
-
-
         WeatherDisplay(viewModel)
-
-
-
-
-
 }
 
 @Composable
@@ -88,48 +72,53 @@ fun DisplayTemperatures(viewModel: WeatherViewModel) {
             return
         }
         else {
-            Card (
-                modifier = Modifier
-                    .padding(5.dp)
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF9AC4F5)
-                ),
-                elevation = CardDefaults.cardElevation(5.dp),
-            ){
-                Column (
-                    modifier = Modifier
-                        .padding(top = 60.dp, start = 10.dp, end = 10.dp, bottom =0.dp)
-                        .fillMaxWidth(),
+            DisplayResults(temp, tempMin, tempMax, datetime, address, timezone, latitude, longitude)
+        }
+    }
+}
+
+@Composable
+fun DisplayResults(temp: Double?, tempMin: Double?, tempMax: Double?, datetime: String?, address: String?, timezone: String?, latitude: Double?, longitude: Double?) {
+    Card (
+        modifier = Modifier
+            .padding(5.dp)
+            .fillMaxWidth()
+            .fillMaxHeight(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF9AC4F5)
+        ),
+        elevation = CardDefaults.cardElevation(5.dp),
+    ){
+        Column (
+            modifier = Modifier
+                .padding(top = 60.dp, start = 10.dp, end = 10.dp, bottom =0.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Text(text = "$datetime", style = MaterialTheme.typography.titleLarge)
+            Spacer(modifier = Modifier.size(25.dp))
+            Surface(modifier = Modifier
+                .padding(4.dp)
+                .size(200.dp),
+                shape = CircleShape,
+                shadowElevation = 5.dp,
+                tonalElevation = 5.dp,
+                color = Color(0xFFFFC400)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
-                    Text(text = "$datetime", style = MaterialTheme.typography.titleLarge)
-                    Spacer(modifier = Modifier.size(25.dp))
-                    Surface(modifier = Modifier
-                        .padding(4.dp)
-                        .size(200.dp),
-                        shape = CircleShape,
-                        shadowElevation = 5.dp,
-                        tonalElevation = 5.dp,
-                        color = Color(0xFFFFC400)
-                    ) {
-                        Column(
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(text = "$temp °", style = MaterialTheme.typography.displaySmall,
-                                fontWeight = FontWeight.ExtraBold)
-                            Spacer(modifier = Modifier.size(10.dp))
-                            Text(text = "$tempMax ° / $tempMin °", style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.ExtraLight)
-                        }
-                    }
-                    Spacer(modifier = Modifier.size(25.dp))
-                    Text(text = "$address ($timezone)", style = MaterialTheme.typography.titleLarge)
+                    Text(text = "$temp °", style = MaterialTheme.typography.displaySmall,
+                        fontWeight = FontWeight.ExtraBold)
+                    Spacer(modifier = Modifier.size(10.dp))
+                    Text(text = "$tempMax ° / $tempMin °", style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.ExtraLight)
                 }
             }
+            Spacer(modifier = Modifier.size(25.dp))
+            Text(text = "$address ($timezone)", style = MaterialTheme.typography.titleLarge)
         }
     }
 }

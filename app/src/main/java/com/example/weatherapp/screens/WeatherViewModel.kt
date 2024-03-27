@@ -21,7 +21,7 @@ class WeatherViewModel @Inject constructor(private val repository: WeatherReposi
 //        getWeatherData(endDate="today")
 //    }
 
-    public fun getWeatherData(endDate: String) {
+    fun getWeatherData(endDate: String) {
         viewModelScope.launch {
             // Clear the previous data
             data.value = DataOrException(null, true, Exception(""))
