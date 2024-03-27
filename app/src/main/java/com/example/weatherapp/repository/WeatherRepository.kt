@@ -35,6 +35,8 @@ class WeatherRepository @Inject constructor(private val api: WeatherAPI, private
 
     suspend fun deleteWeatherData(weatherData: WeatherData) = weatherDatabaseDao.delete(weatherData)
 
+    suspend fun searchWeatherDataByDate(date: String) = weatherDatabaseDao.getWeatherDataByDate(date)
+
     suspend fun deleteAllWeatherData() = weatherDatabaseDao.deleteAll()
 
     fun getAllWeatherData() : Flow<List<WeatherData>> = weatherDatabaseDao.getAllWeatherData()

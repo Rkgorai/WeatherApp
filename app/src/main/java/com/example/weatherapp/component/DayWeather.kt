@@ -1,5 +1,6 @@
 package com.example.weatherapp.component
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,8 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.weatherapp.model.WeatherData
 import com.example.weatherapp.screens.WeatherViewModel
-
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -75,7 +78,7 @@ fun DisplayResults(temp: Double?, tempMin: Double?, tempMax: Double?, datetime: 
     ){
         Column (
             modifier = Modifier
-                .padding(top = 60.dp, start = 10.dp, end = 10.dp, bottom =0.dp)
+                .padding(top = 60.dp, start = 10.dp, end = 10.dp, bottom = 0.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

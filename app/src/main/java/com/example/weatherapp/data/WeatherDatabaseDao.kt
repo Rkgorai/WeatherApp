@@ -15,7 +15,7 @@ interface WeatherDatabaseDao {
     fun getAllWeatherData(): Flow<List<WeatherData>>
 
     @Query("SELECT * FROM weather_table WHERE datetime = :datetime")
-    suspend fun getWeatherData(datetime: String): WeatherData
+    suspend fun getWeatherDataByDate(datetime: String): WeatherData
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(weatherData: WeatherData)

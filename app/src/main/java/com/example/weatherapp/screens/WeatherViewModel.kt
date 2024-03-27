@@ -48,17 +48,22 @@ class WeatherViewModel @Inject constructor(private val repository: WeatherReposi
             if (data.value.data.toString().isNotEmpty()) {
                 data.value.loading = false
             }
+            addWeatherData(WeatherData(datetime = data.value.data?.days?.get(0)?.datetime.toString(), temp = data.value.data?.days?.get(0)?.temp!!, tempmin = data.value.data?.days?.get(0)?.tempmin!!, tempmax = data.value.data?.days?.get(0)?.tempmax!!, address = data.value.data?.address!!, timezone = data.value.data?.timezone!!, latitude = data.value.data?.latitude!!, longitude = data.value.data?.longitude!!))
         }
     }
 
     private val _weatherList = MutableStateFlow<List<WeatherData>>(emptyList())
     val weatherList = _weatherList.asStateFlow()
 
-    suspend fun addWeatherData(weatherData: WeatherData) = viewModelScope.launch {
+     fun addWeatherData(weatherData: WeatherData) = viewModelScope.launch {
         repository.addWeatherData(weatherData)
     }
 
-    suspend fun removeWeatherData(weatherData: WeatherData) = viewModelScope.launch {
+    fun searchWeatherData(date: String) = viewModelScope.launch {
+        repository.searchWeatherDataByDate(date)
+    }
+
+     fun removeWeatherData(weatherData: WeatherData) = viewModelScope.launch {
         repository.deleteWeatherData(weatherData)
     }
 

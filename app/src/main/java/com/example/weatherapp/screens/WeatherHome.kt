@@ -1,5 +1,6 @@
 package com.example.weatherapp.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -70,6 +72,7 @@ fun WeatherDisplay(viewModel: WeatherViewModel) {
 @Composable
 fun MainContent(viewModel: WeatherViewModel) {
 
+    val weatherDataList = viewModel.weatherList.collectAsState().value
 
     val date = remember {
         mutableStateOf("")
@@ -80,13 +83,6 @@ fun MainContent(viewModel: WeatherViewModel) {
             .padding(1.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-//        OutlinedTextField(
-//            modifier = Modifier.fillMaxWidth()
-//        .padding(14.dp),
-//            value = "",
-//            onValueChange = {},
-//            label = { Text("Enter City") }
-//        )
 
         OutlinedTextField(
             modifier = Modifier
@@ -100,12 +96,12 @@ fun MainContent(viewModel: WeatherViewModel) {
         )
 
         Button(onClick = {
-            viewModel.getWeatherData(date.value)
+                viewModel.getWeatherData(date.value)
             date.value = ""
         }) {
             Text(text = "Search")
         }
+        Log.d("TAG", "WeatherList: ${viewModel.weatherList.collectAsState().value}")
 
     }
 }
-
