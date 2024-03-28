@@ -28,6 +28,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.weatherapp.component.DisplayResults
 import com.example.weatherapp.component.DisplayTemperatures
 import com.example.weatherapp.model.WeatherData
+import com.example.weatherapp.util.getPreviousYears
+import com.example.weatherapp.util.isFutureDate
 
 @Composable
 fun WeatherHome(viewModel: WeatherViewModel = hiltViewModel()) {
@@ -107,6 +109,10 @@ fun MainContent(viewModel: WeatherViewModel) {
             mutableStateOf(false)
         }
 
+        val isFuture = remember {
+            mutableStateOf(false)
+        }
+
         Button(onClick = {
             val weatherDataForDate = weatherDataList.find { it.datetime == date.value }
             if (weatherDataForDate != null) {
@@ -114,9 +120,19 @@ fun MainContent(viewModel: WeatherViewModel) {
                 Log.d("BUTTON", "WeatherDataForDate: $weatherDataForDate")
 
             } else{
-                viewModel.getWeatherData(date.value)
-                date.value = ""
+                if(isFutureDate(date.value)){
+
+                    /*TODO*/
+                    viewModel.getWeatherDataForYears(getPreviousYears(date.value, 10), date.value)
+                    viewModel.getWeatherData(date.value)
+                    isFuture.value = true
+
+                    Log.d("BUTTON", "MainContent: Date is in the future")
+                }else {
+                    viewModel.getWeatherData(date.value)
+                }
             }
+            date.value = ""
         }) {
             Text(text = "Search")
         }
@@ -126,7 +142,10 @@ fun MainContent(viewModel: WeatherViewModel) {
             weatherDataList.find { it.datetime == dateCopy.value }
                 ?.let { DisplayResults(weatherData = it) }
             Log.d("FROM DB", "MainContent: FROM DB ${dateCopy.value}")
-
+        }
+        else if(isFuture.value){
+            Log.d("INSIDE Future", "Object: ${viewModel.obj}")
+            DisplayResults(weatherData = viewModel.obj.value)
         }
         else {
             DisplayTemperatures(viewModel)
