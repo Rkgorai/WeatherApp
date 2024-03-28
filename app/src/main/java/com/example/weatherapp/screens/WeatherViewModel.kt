@@ -69,8 +69,8 @@ val obj = mutableStateOf(WeatherData(
             addWeatherData(WeatherData(datetime = data.value.data?.days?.get(0)?.datetime.toString(), temp = data.value.data?.days?.get(0)?.temp!!, tempmin = data.value.data?.days?.get(0)?.tempmin!!, tempmax = data.value.data?.days?.get(0)?.tempmax!!, address = data.value.data?.address!!, timezone = data.value.data?.timezone!!, latitude = data.value.data?.latitude!!, longitude = data.value.data?.longitude!!))
         }
     }
-    val df = DecimalFormat("#.##")
 
+    //API
     // Define a suspend function to fetch weather data for a list of years
     suspend fun fetchWeatherDataForYears(years: List<String>, d: String) {
         withContext(Dispatchers.Default) {
@@ -131,6 +131,7 @@ val obj = mutableStateOf(WeatherData(
     private val _weatherList = MutableStateFlow<List<WeatherData>>(emptyList())
     val weatherList = _weatherList.asStateFlow()
 
+    //Database Operations
      fun addWeatherData(weatherData: WeatherData) = viewModelScope.launch {
         repository.addWeatherData(weatherData)
     }

@@ -1,6 +1,7 @@
 package com.example.weatherapp.util
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 fun getPreviousYears(inputDate: String, years: Int): List<String> {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -26,4 +27,20 @@ fun isFutureDate(dateString: String): Boolean {
     val currentDate = LocalDate.now()
 
     return date.isAfter(currentDate)
+}
+
+fun isValidDateFormat(date: String): Boolean {
+    val dateRegex = Regex("""\d{4}-\d{2}-\d{2}""")
+    return date.matches(dateRegex)
+}
+
+fun isValidDate(dateString: String): Boolean {
+    return try {
+        // Attempt to parse the input string as a LocalDate
+        LocalDate.parse(dateString)
+        true
+    } catch (e: DateTimeParseException) {
+        // Catch the exception if parsing fails, indicating an invalid date format
+        false
+    }
 }

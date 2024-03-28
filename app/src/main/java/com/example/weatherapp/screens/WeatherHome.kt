@@ -30,6 +30,8 @@ import com.example.weatherapp.component.DisplayTemperatures
 import com.example.weatherapp.model.WeatherData
 import com.example.weatherapp.util.getPreviousYears
 import com.example.weatherapp.util.isFutureDate
+import com.example.weatherapp.util.isValidDate
+import com.example.weatherapp.util.isValidDateFormat
 
 @Composable
 fun WeatherHome(viewModel: WeatherViewModel = hiltViewModel()) {
@@ -84,6 +86,8 @@ fun MainContent(viewModel: WeatherViewModel) {
     val dateCopy = remember {
         mutableStateOf("")
     }
+    val error = remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -99,7 +103,8 @@ fun MainContent(viewModel: WeatherViewModel) {
             onValueChange = {
                 date.value = it
                 dateCopy.value = it
-                            },
+                error.value = ""
+            },
             label = { Text("Enter Date in YYYY-MM-DD") },
             enabled = true,
             readOnly = false
@@ -114,6 +119,21 @@ fun MainContent(viewModel: WeatherViewModel) {
         }
 
         Button(onClick = {
+            if (date.value.isEmpty()) {
+                error.value = "Please enter a date"
+                return@Button
+            }
+
+            if(!isValidDateFormat(date.value)){
+                error.value = "Please enter a valid date format"
+                return@Button
+            }
+
+            if (!isValidDate(date.value)) {
+                error.value = "Please enter a valid date"
+                return@Button
+            }
+
             val weatherDataForDate = weatherDataList.find { it.datetime == date.value }
             if (weatherDataForDate != null) {
                 isFromDB.value = true
@@ -135,6 +155,10 @@ fun MainContent(viewModel: WeatherViewModel) {
             date.value = ""
         }) {
             Text(text = "Search")
+        }
+
+        if (error.value.isNotEmpty()) {
+            Text(text = error.value, color = Color.Red)
         }
 
         Log.d("TAG", "WeatherList: ${viewModel.weatherList.collectAsState().value}")
