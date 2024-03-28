@@ -96,7 +96,7 @@ val obj = mutableStateOf(WeatherData(
                 val averageMinTemperature = minTemperatures.average()
 
                 val maxTemperatures = results.flatMap { it.data?.days?.map { day -> day.tempmax } ?: emptyList() }
-                val averageMaxTemperature = minTemperatures.average()
+                val averageMaxTemperature = maxTemperatures.average()
 
                 val addresses = results.map { it.data?.address ?: "" }
                 val timezones = results.map { it.data?.timezone ?: "" }
