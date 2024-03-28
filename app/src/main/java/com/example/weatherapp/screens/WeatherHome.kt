@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.weatherapp.component.DisplayResults
@@ -30,6 +31,7 @@ import com.example.weatherapp.component.DisplayTemperatures
 import com.example.weatherapp.model.WeatherData
 import com.example.weatherapp.util.getPreviousYears
 import com.example.weatherapp.util.isFutureDate
+import com.example.weatherapp.util.isNetworkConnected
 import com.example.weatherapp.util.isValidDate
 import com.example.weatherapp.util.isValidDateFormat
 
@@ -77,6 +79,9 @@ fun WeatherDisplay(viewModel: WeatherViewModel) {
 
 @Composable
 fun MainContent(viewModel: WeatherViewModel) {
+
+    //Network connected or not
+    val isNet = isNetworkConnected(LocalContext.current)
 
     val weatherDataList = viewModel.weatherList.collectAsState().value
 
@@ -149,7 +154,9 @@ fun MainContent(viewModel: WeatherViewModel) {
 
                     Log.d("BUTTON", "MainContent: Date is in the future")
                 }else {
-                    viewModel.getWeatherData(date.value)
+                    if(isNet){
+                        viewModel.getWeatherData(date.value)
+                    }
                 }
             }
             date.value = ""
@@ -161,6 +168,13 @@ fun MainContent(viewModel: WeatherViewModel) {
             Text(text = error.value, color = Color.Red)
         }
 
+        if(isNet) {
+            Text(text = "Network is connected", color = Color.Green)
+        }
+        else {
+            Text(text = "Network is not connected", color = Color.Red)
+        }
+
         Log.d("TAG", "WeatherList: ${viewModel.weatherList.collectAsState().value}")
         if (isFromDB.value) {
             weatherDataList.find { it.datetime == dateCopy.value }
@@ -168,11 +182,12 @@ fun MainContent(viewModel: WeatherViewModel) {
             Log.d("FROM DB", "MainContent: FROM DB ${dateCopy.value}")
         }
         else if(isFuture.value){
-            Log.d("INSIDE Future", "Object: ${viewModel.obj}")
-            DisplayResults(weatherData = viewModel.obj.value)
+                Log.d("INSIDE Future", "Object: ${viewModel.obj}")
+                DisplayResults(weatherData = viewModel.obj.value)
         }
         else {
             DisplayTemperatures(viewModel)
         }
+
     }
 }
