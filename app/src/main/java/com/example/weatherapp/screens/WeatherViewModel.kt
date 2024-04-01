@@ -75,36 +75,51 @@ val obj = mutableStateOf(WeatherData(
     suspend fun fetchWeatherDataForYears(years: List<String>, d: String) {
         withContext(Dispatchers.Default) {
             // Start asynchronous tasks concurrently for each year in the list
-            val deferredResults = years.map { year ->
-                async {
-                    repository.getWeatherData(year)
-                }
+//            val deferredResults = years.map { year ->
+//                async {
+//                    Log.d("WeatherData", "Fetching data for year: $year")
+//                    val result = repository.getWeatherData(year)
+//                    Log.d("WeatherData", "Result for year $year: $result")
+//
+//                    result
+//                }
+//            }
+//
+//            // Wait for all tasks to complete
+//            val results = deferredResults.awaitAll()
+
+            val results = mutableListOf<WeatherResponse?>()
+
+            // Fetch data sequentially for each year in the list
+            for (year in years) {
+                Log.d("WeatherData", "Fetching data for year: $year")
+                val result = repository.getWeatherData(year)
+                Log.d("WeatherData", "Result for year $year: $result")
+                results.add(result.data)
             }
 
-            // Wait for all tasks to complete
-            val results = deferredResults.awaitAll()
-
+            Log.d("RESULTS", "fetchWeatherDataForYears: $results")
             // Process the results
-            val allSuccessful: Boolean = results.all { it.data != null}
+            val allSuccessful: Boolean = results.all { it != null}
             if (allSuccessful) {
                 // Your code when all responses are successful
                 // Process the results
-                val temperatures = results.flatMap { it.data?.days?.map { day -> day.temp } ?: emptyList() }
+                val temperatures = results.flatMap { it?.days?.map { day -> day.temp } ?: emptyList() }
                 val averageTemperature = temperatures.average()
 
-                val minTemperatures = results.flatMap { it.data?.days?.map { day -> day.tempmin } ?: emptyList() }
+                val minTemperatures = results.flatMap { it?.days?.map { day -> day.tempmin } ?: emptyList() }
                 val averageMinTemperature = minTemperatures.average()
 
-                val maxTemperatures = results.flatMap { it.data?.days?.map { day -> day.tempmax } ?: emptyList() }
+                val maxTemperatures = results.flatMap { it?.days?.map { day -> day.tempmax } ?: emptyList() }
                 val averageMaxTemperature = maxTemperatures.average()
 
-                val addresses = results.map { it.data?.address ?: "" }
-                val timezones = results.map { it.data?.timezone ?: "" }
-                val latitudes = results.map { it.data?.latitude ?: 0.0 }
-                val longitudes = results.map { it.data?.longitude ?: 0.0 }
-                val datetime = results.map { it.data?.days?.get(0)?.datetime ?: "" }
+                val addresses = results.map { it?.address ?: "" }
+                val timezones = results.map { it?.timezone ?: "" }
+                val latitudes = results.map { it?.latitude ?: 0.0 }
+                val longitudes = results.map { it?.longitude ?: 0.0 }
+                val datetime = results.map { it?.days?.get(0)?.datetime ?: "" }
 
-                obj.value = WeatherData(datetime = d, temp = String.format("%.2f", averageTemperature).toDouble(), tempmin = String.format("%.2f", averageMinTemperature).toDouble(), tempmax = String.format("%.2f", averageMaxTemperature).toDouble(), address = addresses[0], timezone = timezones[0], latitude = latitudes[0], longitude = longitudes[0])
+                obj.value = WeatherData(datetime = d, temp = String.format("%.1f", averageTemperature).toDouble(), tempmin = String.format("%.1f", averageMinTemperature).toDouble(), tempmax = String.format("%.1f", averageMaxTemperature).toDouble(), address = addresses[0], timezone = timezones[0], latitude = latitudes[0], longitude = longitudes[0])
             } else {
                 // Your code when at least one response is not successful
                 // Handle the error
